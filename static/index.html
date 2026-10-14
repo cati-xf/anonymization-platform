@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>European Portuguese Text and Speech Anonymizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 17px; }
+
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --bg: #eef2ff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --muted: #64748b;
+      --text: #0f172a;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, #c7d7ff 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #312e81 100%);
+      color: white;
+      padding: 2rem 2.5rem 0;
+      position: relative;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 2.5rem;
+    }
+    .header-icon {
+      width: 52px; height: 52px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 12px rgba(99,102,241,0.5));
+    }
+    header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { font-size: 0.95rem; opacity: 0.6; margin-top: 0.2rem; }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+    .dot-live {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+
+    .header-wave svg {
+      display: block;
+      width: 100%;
+      height: 48px;
+    }
+
+    /* ── Main ────────────────────────────────────────────────────────────────── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 4rem;
+    }
+
+    /* ── Tabs ────────────────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 0.375rem;
+      background: white;
+      padding: 0.375rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 150px;
+      padding: 0.5rem 0.875rem;
+      border: none;
+      background: none;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      font-family: inherit;
+    }
+    .tab-btn-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .tab-btn-desc {
+      font-size: 0.7rem;
+      font-weight: 400;
+      opacity: 0.75;
+      line-height: 1.2;
+      text-align: center;
+      white-space: normal;
+    }
+    .tab-btn:hover:not(.active) { background: var(--primary-light); color: var(--primary); }
+    .tab-btn.active {
+      background: var(--primary-dark);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(30,58,138,.35);
+    }
+    .tab-btn.active .tab-btn-title { font-weight: 600; }
+    .tab-intro {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .tab-intro::before {
+      content: 'ⓘ';
+      font-style: normal;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      color: var(--primary);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeUp .2s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+    /* ── Cards ───────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.045);
+      transition: box-shadow .2s;
+    }
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .step-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.3rem; height: 1.3rem;
+      border-radius: 50%;
+      background: var(--primary-dark);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Upload zone ─────────────────────────────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 0.875rem;
+      padding: 2.75rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s ease;
+      user-select: none;
+      background: #fafbff;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59,130,246,.12);
+    }
+    .upload-zone.has-file {
+      border-color: #22c55e;
+      border-style: solid;
+      background: #f0fdf4;
+    }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-icon-wrap {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto .875rem;
+      font-size: 1.6rem;
+      transition: transform .2s;
+    }
+    .upload-zone:hover .upload-icon-wrap,
+    .upload-zone.drag-over .upload-icon-wrap { transform: scale(1.12); }
+    .upload-zone.has-file .upload-icon-wrap  { background: linear-gradient(135deg,#dcfce7,#bbf7d0); }
+    .upload-main { font-weight: 600; font-size: 1rem; color: #334155; margin-bottom: .25rem; }
+    .upload-sub  { font-size: .875rem; color: var(--muted); }
+    .upload-sub span { color: #3b82f6; text-decoration: underline; }
+    .upload-name { margin-top:.5rem; font-size:.9rem; font-weight:600; color:#16a34a; display:none; }
+
+    /* ── Entity labels ───────────────────────────────────────────────────────── */
+    .config-grid {
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+    }
+    .config-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+    }
+    @media(max-width:720px){ .config-row{ grid-template-columns:1fr 1fr; } }
+    @media(max-width:420px){ .config-row{ grid-template-columns:1fr; } }
+    .config-item { display: flex; flex-direction: column; align-items: stretch; }
+    /* Pattern Exceptions: same width as 3 of the 4 columns above it (Patterns
+       itself takes the 4th, matching Person/Location/Organization/Misc) */
+    .exceptions-item { grid-column: span 3; }
+    @media(max-width:720px){ .exceptions-item{ grid-column: span 2; } }
+    @media(max-width:420px){ .exceptions-item{ grid-column: span 1; } }
+    .config-item > .entity-pill { align-self: flex-start; }
+
+    .entity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .25rem .7rem;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      margin-bottom: .4rem;
+    }
+    .ep-per   { background:#f3e8ff; color:#7c3aed; }
+    .ep-loc   { background:#dcfce7; color:#15803d; }
+    .ep-org   { background:#fff7ed; color:#c2410c; }
+    .ep-misc  { background:#f1f5f9; color:#475569; }
+    .ep-regex { background:#e0f2fe; color:#0369a1; }
+
+    select {
+      width: 100%;
+      padding: .5rem 2rem .5rem .65rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .875rem;
+      color: var(--text);
+      background-color: white;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%2364748b' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .7rem center;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      outline: none;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px #dbeafe; }
+    select:hover { border-color:#94a3b8; }
+
+    /* Custom dropdown that replaces the plain <select> above (kept in the DOM,
+       hidden, as the real value holder) so every dropdown on the page opens
+       the same way as the Subcategories panel: a floating panel below the
+       control, on top of the layout, sharing the same gap/border/shadow. */
+    .custom-select { position: relative; width: 100%; }
+    .custom-select-trigger {
+      display: block;
+      position: relative;
+      width: 100%;
+      margin: 0;
+      padding: .5rem 2rem .5rem .65rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .875rem;
+      font-family: inherit;
+      text-align: left;
+      color: var(--text);
+      background-color: white;
+      outline: none;
+      cursor: pointer;
+      line-height: 1.5;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .custom-select-trigger:hover { border-color: #94a3b8; }
+    .custom-select-trigger::after {
+      content: "";
+      position: absolute;
+      right: .7rem;
+      top: 50%;
+      width: 12px;
+      height: 8px;
+      margin-top: -4px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%2364748b' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      transition: transform .2s ease;
+    }
+    .custom-select.open .custom-select-trigger {
+      border-color:#3b82f6;
+      box-shadow:0 0 0 3px #dbeafe;
+      border-radius: .5rem .5rem 0 0;
+    }
+    .custom-select.open .custom-select-trigger::after { transform: rotate(180deg); }
+    .custom-select-panel {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      margin-top: 0;
+      padding: .35rem;
+      background: white;
+      border: 1.5px solid #94a3b8;
+      border-top: none;
+      border-radius: 0 0 .5rem .5rem;
+      box-shadow: 0 8px 20px -6px rgba(15, 23, 42, .14);
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .custom-select.open .custom-select-panel { display: block; }
+    .custom-select-option {
+      padding: .5rem .65rem;
+      font-size: .875rem;
+      color: var(--text);
+      border-radius: .4rem;
+      cursor: pointer;
+      transition: background-color .12s;
+    }
+    .custom-select-option:hover { background-color: #f8fafc; }
+    .custom-select-option.selected { background-color: #eff6ff; color: #1d4ed8; font-weight: 600; }
+
+    .whitelist-input {
+      width: 100%;
+      padding: .5rem .65rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .875rem;
+      color: var(--text);
+      background: white;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .whitelist-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px #dbeafe; }
+    .whitelist-input:hover { border-color:#94a3b8; }
+    .whitelist-input::placeholder { color: var(--muted); }
+
+    /* Subcategories panel: an independent box, styled and behaving exactly
+       like the custom <select> boxes above it. */
+    .skip-labels { position: relative; width: 100%; }
+    .skip-labels-summary {
+      display: block;
+      position: relative;
+      width: 100%;
+      margin: 0;
+      padding: .55rem 2rem .55rem .65rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .875rem;
+      font-family: inherit;
+      text-align: left;
+      color: var(--text);
+      background-color: white;
+      cursor: pointer;
+      user-select: none;
+      line-height: 1.5;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .skip-labels-summary:hover { border-color: #94a3b8; }
+    .skip-labels-summary.is-placeholder { color: var(--muted); }
+    .skip-labels-summary::after {
+      content: "";
+      position: absolute;
+      right: .7rem;
+      top: 50%;
+      width: 12px;
+      height: 8px;
+      margin-top: -4px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%2364748b' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      transition: transform .2s ease;
+    }
+    .skip-labels.open .skip-labels-summary {
+      border-color:#3b82f6;
+      box-shadow:0 0 0 3px #dbeafe;
+      border-radius: .5rem .5rem 0 0;
+    }
+    .skip-labels.open .skip-labels-summary::after { transform: rotate(180deg); }
+    .skip-labels-grid {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      margin-top: 0;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: .15rem .5rem;
+      padding: .35rem;
+      background: white;
+      border: 1.5px solid #94a3b8;
+      border-top: none;
+      border-radius: 0 0 .5rem .5rem;
+      box-shadow: 0 8px 20px -6px rgba(15, 23, 42, .14);
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .skip-labels.open .skip-labels-grid { display: grid; }
+    .skip-labels-grid label {
+      display: flex;
+      gap: .6rem;
+      align-items: center;
+      font-size: .875rem;
+      color: var(--text);
+      cursor: pointer;
+      padding: .45rem .5rem;
+      border-radius: .5rem;
+      border: 1.5px solid transparent;
+      transition: background .12s, border-color .12s;
+    }
+    .skip-labels-grid label:hover { background: #f8fafc; border-color: #e2e8f0; }
+    .skip-labels-grid label:has(input:checked) { background: #eff6ff; border-color: #bfdbfe; }
+    .skip-labels-grid input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex: none;
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+
+    /* ── Method legend ───────────────────────────────────────────────────────── */
+    .method-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .ml-item {
+      font-size: 0.875rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .ml-label {
+      font-weight: 600;
+      color: #475569;
+    }
+
+    /* ── Method radio cards ──────────────────────────────────────────────────── */
+    .radio-group { display:flex; gap:.75rem; flex-wrap:wrap; }
+    .radio-card {
+      flex: 1;
+      min-width: 180px;
+      border: 2px solid var(--border);
+      border-radius: .75rem;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: all .2s ease;
+      position: relative;
+    }
+    .radio-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 10%; height: 80%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--primary-dark);
+      transform: scaleY(0);
+      transition: transform .2s ease;
+    }
+    .radio-card:has(input:checked) {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg,#eff6ff,#f5f3ff);
+      box-shadow: 0 2px 10px rgba(59,130,246,.15);
+    }
+    .radio-card:has(input:checked)::before { transform:scaleY(1); }
+    .radio-card input { display:none; }
+    .rc-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.35rem; }
+    .rc-icon  { font-size:1.1rem; }
+    .rc-title { font-weight:700; font-size:.95rem; }
+    .rc-desc  { font-size:.875rem; color:var(--muted); line-height:1.55; }
+    .rc-desc-sm { font-size:.78rem; }
+
+    /* ── Run button ──────────────────────────────────────────────────────────── */
+    .btn-run {
+      width: 100%;
+      padding: .8rem;
+      background: linear-gradient(135deg,#1e3a8a,#1d4ed8);
+      color: white;
+      border: none;
+      border-radius: .75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s ease;
+      margin-top: .25rem;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      box-shadow: 0 4px 14px rgba(30,58,138,.3);
+    }
+    .btn-run:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(30,58,138,.4);
+    }
+    .btn-run:active:not(:disabled) { transform:translateY(0); }
+    .btn-run:disabled { background:#94a3b8; cursor:not-allowed; box-shadow:none; transform:none; }
+
+    /* ── Job status ──────────────────────────────────────────────────────────── */
+    .job-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom: .75rem;
+    }
+    .job-title { font-weight:700; font-size:1rem; }
+    .status-badge {
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.25rem .75rem;
+      border-radius:999px;
+      font-size:.8rem; font-weight:700; letter-spacing:.04em;
+    }
+    .badge-running { background:#dbeafe; color:#1d4ed8; }
+    .badge-done    { background:#dcfce7; color:#166534; }
+    .badge-error   { background:#fee2e2; color:#991b1b; }
+    .spinner {
+      width:.7rem; height:.7rem;
+      border:2px solid currentColor;
+      border-top-color:transparent;
+      border-radius:50%;
+      animation:spin .65s linear infinite;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Progress bar (replaces the raw log panel — only the current step name is shown) */
+    .log-panel {
+      font-size: .9rem;
+      color: #475569;
+      min-height: 1.4em;
+    }
+    .log-panel::after {
+      content: '';
+      display: block;
+      margin-top: .6rem;
+      height: 8px;
+      border-radius: 99px;
+      background:
+        linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%) 0 0 / 40% 100% no-repeat,
+        #e2e8f0;
+      animation: progress-slide 1.4s ease-in-out infinite;
+    }
+    @keyframes progress-slide {
+      from { background-position: -40% 0, 0 0; }
+      to   { background-position: 140% 0, 0 0; }
+    }
+    .log-panel[data-state="paused"]::after { animation-play-state: paused; opacity: .5; }
+    .log-panel[data-state="done"]::after   { animation: none; background: #22c55e; }
+    .log-panel[data-state="error"]::after  { animation: none; background: #f87171; }
+    .log-panel[data-state="error"]         { color: #dc2626; }
+
+    /* ── Results ─────────────────────────────────────────────────────────────── */
+    .result-card { border-left: 3px solid #22c55e; }
+
+    .diff-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;
+    }
+    @media(max-width:600px){ .diff-grid{grid-template-columns:1fr} }
+
+    .text-block-label {
+      font-size:.78rem; font-weight:700; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.07em; margin-bottom:.4rem;
+    }
+    .text-block {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      padding: .875rem;
+      font-size: .9375rem;
+      line-height: 1.75;
+      min-height: 80px;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #334155;
+    }
+
+.divider { border:none; border-top:1px solid var(--border); margin:1.25rem 0; }
+
+    .audio-row { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+    audio { flex:1; min-width:200px; height:40px; border-radius:.5rem; }
+    .btn-download {
+      padding:.5rem 1.1rem;
+      background: linear-gradient(135deg,#16a34a,#15803d);
+      color:white; border:none; border-radius:.5rem;
+      font-size:.9375rem; font-weight:600;
+      text-transform:none; letter-spacing:normal;
+      cursor:pointer; text-decoration:none;
+      display:inline-flex; align-items:center; gap:.4rem;
+      transition:all .2s ease; white-space:nowrap;
+      box-shadow:0 2px 8px rgba(22,163,74,.25);
+      font-family:inherit;
+    }
+    .btn-download:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(22,163,74,.35); }
+
+    .btn-try-again {
+      padding:.5rem 1.1rem;
+      background: linear-gradient(135deg,#d97706,#b45309);
+      color:white; border:none; border-radius:.5rem;
+      font-size:.9375rem; font-weight:600;
+      cursor:pointer;
+      display:inline-flex; align-items:center; gap:.4rem;
+      transition:all .2s ease; white-space:nowrap;
+      box-shadow:0 2px 8px rgba(217,119,6,.25);
+      font-family:inherit;
+    }
+    .btn-try-again:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 4px 14px rgba(217,119,6,.35); }
+    .btn-try-again:disabled { background:#94a3b8; cursor:not-allowed; box-shadow:none; transform:none; }
+    .try-again-hint {
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--muted);
+      width: 100%;
+      text-align: right;
+      margin: 0.35rem 0 0;
+    }
+
+    /* ── Batch mode (multiple files, no review) ─────────────────────────────── */
+    .batch-warning {
+      display:flex; align-items:flex-start; gap:.6rem;
+      background:#fef3c7; border:1px solid #fcd34d; border-radius:.5rem;
+      padding:.7rem .9rem; margin-top:.85rem;
+      font-size:.825rem; color:#78350f; line-height:1.5;
+    }
+    .batch-warning-icon { flex-shrink:0; font-size:1rem; }
+    .batch-row {
+      border:1px solid var(--border); border-radius:.5rem;
+      padding:.75rem 1rem; margin-bottom:.6rem;
+    }
+    .batch-row-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem; flex-wrap:wrap; }
+    .batch-row-name { font-weight:600; font-size:.875rem; word-break:break-all; }
+    .batch-row-body { margin-top:.6rem; }
+    .batch-results-head {
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem; flex-wrap:wrap;
+      margin-bottom:1rem;
+    }
+    .batch-results-head .card-title { margin-bottom:0; }
+
+    /* ── Text tab ───────────────────────────────────────────────────── */
+    textarea {
+      width:100%; padding:.75rem .875rem;
+      border:1.5px solid #e2e8f0; border-radius:.625rem;
+      font-size:.9375rem; color:var(--text);
+      resize:vertical; outline:none; font-family:inherit;
+      line-height:1.7; transition:border-color .15s, box-shadow .15s;
+      background:#fafbff;
+    }
+    textarea:focus { border-color:#3b82f6; box-shadow:0 0 0 3px #dbeafe; background:white; }
+    textarea.tall { height:120px; }
+
+    .hidden { display:none !important; }
+
+    /* ── Speaker preview cards ───────────────────────────────────────────────── */
+    .speaker-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+    }
+    @media(max-width:700px){ .speaker-row{ flex-wrap:wrap; } }
+    .speaker-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 0.5rem 0.65rem;
+      border: 2px solid var(--border);
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all .2s;
+      background: white;
+      text-align: center;
+      min-width: 64px;
+    }
+    .speaker-card:has(input:checked) {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+      box-shadow: 0 2px 10px rgba(59,130,246,.15);
+    }
+    .speaker-card input { display: none; }
+    .speaker-name { font-weight: 700; font-size: .875rem; color: var(--text); letter-spacing: .03em; }
+    .speaker-gender { font-size: .65rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: -.35rem; }
+    .speaker-group-sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 .25rem; }
+    @media(max-width:700px){ .speaker-group-sep{ display:none; } }
+    .speaker-play-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      font-size: .7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, transform .1s;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .speaker-play-btn:hover:not(.playing) { background: #1d4ed8; transform: scale(1.1); }
+    .speaker-play-btn.playing { background: #ef4444; }
+
+    /* ── Entity review ───────────────────────────────────────────────────────── */
+    .review-transcript {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: .625rem;
+      padding: .875rem 1rem;
+      font-size: .9375rem;
+      line-height: 1.85;
+      margin-bottom: 1rem;
+      cursor: text;
+      user-select: text;
+    }
+    .entity-mark {
+      border-radius: 3px;
+      padding: 1px 2px;
+      cursor: pointer;
+      transition: opacity .15s;
+      font-weight: 600;
+    }
+    .entity-mark:hover { opacity: .75; }
+    .entity-mark.em-per   { background:#f3e8ff; color:#6d28d9; outline:2px solid #c4b5fd; }
+    .entity-mark.em-loc   { background:#dcfce7; color:#15803d; outline:2px solid #86efac; }
+    .entity-mark.em-org   { background:#fff7ed; color:#c2410c; outline:2px solid #fdba74; }
+    .entity-mark.em-misc  { background:#f1f5f9; color:#475569; outline:2px solid #cbd5e1; }
+    .entity-mark.em-regex { background:#e0f2fe; color:#0369a1; outline:2px solid #7dd3fc; }
+    .entity-mark.em-custom{ background:#fef2f2; color:#dc2626; outline:2px solid #fca5a5; }
+    .entity-mark.em-removed{ background:#f1f5f9; color:#94a3b8; text-decoration:line-through; outline:none; }
+
+    .entity-list {
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+      margin-bottom: 1rem;
+    }
+    .entity-chip {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .875rem;
+      flex-wrap: wrap;
+      padding: .15rem 0;
+    }
+    .entity-chip.removed {
+      opacity: .5;
+    }
+    .ec-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      border-radius: 999px;
+      padding: .15rem .55rem;
+      flex-shrink: 0;
+    }
+    .ec-original {
+      color: #64748b;
+      font-style: italic;
+      flex-shrink: 0;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ec-arrow { color: var(--muted); flex-shrink: 0; }
+    .ec-repl {
+      flex: 1;
+      min-width: 120px;
+      padding: .25rem .45rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .375rem;
+      font-size: .875rem;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .ec-repl:focus { border-color: #3b82f6; }
+    .ec-repl:disabled { background: #f1f5f9; color: #94a3b8; }
+    .ec-toggle {
+      padding: .2rem .5rem;
+      border: none;
+      border-radius: .375rem;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+    .ec-toggle.active   { background: #fee2e2; color: #991b1b; }
+    .ec-toggle.inactive { background: #dcfce7; color: #166534; }
+
+    .add-custom-row { margin-bottom: 1rem; }
+    .btn-add-custom {
+      padding: .45rem .9rem;
+      border: 1.5px dashed #94a3b8;
+      border-radius: .5rem;
+      background: white;
+      color: var(--muted);
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .btn-add-custom:hover { border-color: var(--primary); color: var(--primary); }
+    .add-custom-form {
+      display: flex;
+      gap: .5rem;
+      margin-top: .6rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .add-custom-form input {
+      flex: 1;
+      min-width: 140px;
+      padding: .4rem .65rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .875rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .add-custom-form input:focus { border-color: #3b82f6; }
+    .btn-custom-add, .btn-custom-cancel {
+      padding: .4rem .85rem;
+      border: none;
+      border-radius: .5rem;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-custom-add    { background: var(--primary-dark); color: white; }
+    .btn-custom-cancel { background: #f1f5f9; color: var(--muted); }
+
+    .review-empty {
+      color: var(--muted);
+      font-size: .875rem;
+      font-style: italic;
+      text-align: center;
+      padding: .75rem 0;
+    }
+
+    .btn-apply {
+      width: 100%;
+      padding: .75rem;
+      background: linear-gradient(135deg, #15803d, #166534);
+      color: white;
+      border: none;
+      border-radius: .75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      box-shadow: 0 4px 14px rgba(22,163,74,.3);
+      transition: all .2s ease;
+      margin-top: .25rem;
+    }
+    .btn-apply:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(22,163,74,.4);
+    }
+    .btn-apply:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    .ec-beep {
+      padding: .2rem .6rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .375rem;
+      cursor: pointer;
+      font-size: .78rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: white;
+      color: #64748b;
+      transition: all .15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .ec-beep:hover:not(.is-active) { border-color: #f59e0b; background: #fffbeb; color: #92400e; }
+    .ec-beep.is-active { background: #fef3c7; color: #92400e; border-color: #f59e0b; font-weight: 700; }
+    .ec-repl.is-beep {
+      background: #fffbeb;
+      color: #92400e;
+      font-weight: 700;
+      border-color: #fcd34d;
+      font-style: normal;
+    }
+
+    .ec-live {
+      padding: .2rem .6rem;
+      border: 1.5px solid #c7d2fe;
+      border-radius: .375rem;
+      cursor: pointer;
+      font-size: .78rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: #eef2ff;
+      color: #3730a3;
+      transition: all .15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .ec-live:hover:not(:disabled) { background: #e0e7ff; border-color: #818cf8; }
+    .ec-live:disabled { opacity: .5; cursor: not-allowed; }
+    .ec-no-local {
+      font-size: .75rem;
+      color: #94a3b8;
+      font-style: italic;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <svg class="header-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26 4L44 12V24C44 34.5 36 42.5 26 46C16 42.5 8 34.5 8 24V12L26 4Z"
+            fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+      <path d="M13 26 Q16 18 19 26 Q22 34 25 26 Q28 18 31 26 Q34 34 37 26 Q38 22 39 26"
+            fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Text and Speech Anonymizer</h1>
+      <p>European Portuguese text and speech de-identification pipeline</p>
+    </div>
+  </div>
+  <div class="header-wave">
+    <svg viewBox="0 0 1440 48" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,24 C360,48 1080,0 1440,24 L1440,48 L0,48 Z" fill="#eef2ff"/>
+    </svg>
+  </div>
+</header>
+
+<main>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="text">
+      <span class="tab-btn-title">📝 Text</span>
+      <span class="tab-btn-desc">Anonymize written text only</span>
+    </button>
+    <button class="tab-btn" data-tab="spoken">
+      <span class="tab-btn-title">🗣️ Spoken Content</span>
+      <span class="tab-btn-desc">Anonymize what's said, keep the voice</span>
+    </button>
+    <button class="tab-btn" data-tab="voice">
+      <span class="tab-btn-title">🎙️ Voice Only</span>
+      <span class="tab-btn-desc">Disguise the voice, keep the words</span>
+    </button>
+    <button class="tab-btn" data-tab="full">
+      <span class="tab-btn-title">✨ Content + Voice</span>
+      <span class="tab-btn-desc">Anonymize both the words and the voice</span>
+    </button>
+  </div>
+
+  <!-- TAB: Text -->
+  <div id="tab-text" class="tab-panel active">
+    <p class="tab-intro">Type, paste, or upload one or more documents (TXT/DOCX). Sensitive entities (names, locations, organizations, phone numbers, IDs, etc.) are detected and can be reviewed and edited before anonymization is applied. </p>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">1</span> Input Text</div>
+      <div class="upload-zone" id="uploadZone-text" style="padding:1.25rem 1.5rem">
+        <input type="file" id="docFile-text" accept=".txt,.docx" multiple>
+        <div class="upload-icon-wrap" style="width:44px;height:44px;font-size:1.2rem;margin-bottom:.5rem">📄</div>
+        <div class="upload-main" style="font-size:.9rem">Drop one or more documents here</div>
+        <div class="upload-sub">or <span>click to browse</span> &nbsp;·&nbsp; TXT, DOCX</div>
+        <div class="upload-name" id="uploadName-text"></div>
+      </div>
+      <div class="batch-warning hidden" id="batchWarning-text">
+        <span class="batch-warning-icon">⚡</span>
+        <span><strong>Batch mode</strong> - <span id="batchCount-text">0</span> files selected. Each file is anonymized automatically, reviewing or editing detected entities before applying is <strong>not available</strong> when processing multiple files.</span>
+      </div>
+      <div id="textInputAlt">
+        <div style="text-align:center;font-size:1rem;color:var(--muted);font-weight:500;margin:.85rem 0">or</div>
+        <textarea id="textInput" class="tall"
+          placeholder="Write Portuguese text here… e.g. O João Silva mora na Rua das Flores, Lisboa, e o NIF dele é 123456789."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">2</span> Anonymization Options</div>
+      <div class="method-legend">
+        <div class="ml-item"><span class="ml-label">Redact</span> - replace with XXXXXX.</div>
+        <div class="ml-item"><span class="ml-label">Placeholder tag</span> - replace with a numbered label such as <code>[PERSON_1]</code>.</div>
+        <div class="ml-item"><span class="ml-label">Generalize</span> - replace with a broader category description (e.g., "Lisbon" → "Portuguese city").</div>
+        <div class="ml-item"><span class="ml-label">Fake substitute</span> - replace with a random alternative (e.g., "Catarina" → "Maria").</div>
+        <div class="ml-item"><span class="ml-label">None</span> - leave untouched (no anonymization applied).</div>
+      </div>
+      <div class="config-grid">
+        <div class="config-row">
+        <div class="config-item">
+          <div class="entity-pill ep-per">👤 Person</div>
+          <select id="t_per">
+            <option value="sup">Redact</option>
+            <option value="tag">Placeholder tag</option>
+            <option value="gen">Generalize</option>
+            <option value="rand" selected>Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-loc">📍 Location</div>
+          <select id="t_loc">
+            <option value="sup">Redact</option>
+            <option value="tag">Placeholder tag</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-org">🏢 Organization</div>
+          <select id="t_org">
+            <option value="sup">Redact</option>
+            <option value="tag">Placeholder tag</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-misc">🔍 Miscellaneous</div>
+          <select id="t_misc">
+            <option value="sup">Redact</option>
+            <option value="tag">Placeholder tag</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-regex">🔤 Patterns (e.g. NIF ) & 🚫 Subcategories not to anonymize</div>
+          <div class="config-row">
+        <div class="config-item">
+          <select id="t_regex">
+            <option value="sup">Redact</option>
+            <option value="tag">Placeholder tag</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item exceptions-item">
+          <div class="skip-labels">
+            <button type="button" class="skip-labels-summary is-placeholder">All subcategories will be anonymized</button>
+            <div class="skip-labels-grid">
+              <label><input type="checkbox" class="t_regexskip" value="DATETIME"> Dates &amp; times</label>
+              <label><input type="checkbox" class="t_regexskip" value="IDADE"> Age</label>
+              <label><input type="checkbox" class="t_regexskip" value="QUANTITY"> Amounts / values</label>
+              <label><input type="checkbox" class="t_regexskip" value="TELEMOVEL"> Phone number</label>
+              <label><input type="checkbox" class="t_regexskip" value="EMAIL"> Email</label>
+              <label><input type="checkbox" class="t_regexskip" value="NIF"> Tax ID (NIF)</label>
+              <label><input type="checkbox" class="t_regexskip" value="CARTAO_CIDADAO"> Citizen card</label>
+              <label><input type="checkbox" class="t_regexskip" value="NUM_UTENTE"> Health service number</label>
+              <label><input type="checkbox" class="t_regexskip" value="NISS"> Social security number</label>
+              <label><input type="checkbox" class="t_regexskip" value="CARTAO_BANCARIO"> Bank card</label>
+              <label><input type="checkbox" class="t_regexskip" value="IBAN"> IBAN</label>
+              <label><input type="checkbox" class="t_regexskip" value="NIB"> NIB</label>
+              <label><input type="checkbox" class="t_regexskip" value="PASSAPORTE"> Passport</label>
+              <label><input type="checkbox" class="t_regexskip" value="CARTA_CONDUCAO"> Driving licence</label>
+              <label><input type="checkbox" class="t_regexskip" value="MATRICULA"> Vehicle plate</label>
+              <label><input type="checkbox" class="t_regexskip" value="CODIGO_POSTAL"> Postal code</label>
+              <label><input type="checkbox" class="t_regexskip" value="NUM_PORTA"> Door number</label>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="config-item" style="grid-column:1/-1">
+          <div class="entity-pill ep-misc">🚫 Words that should not anonymized</div>
+          <input type="text" id="t_whitelist" class="whitelist-input" placeholder="e.g. Lisboa, Portugal (comma-separated)">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">3</span> Replacement Source</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem">Determines how the replacement text is generated for the categories above set to Generalize or Fake substitute.</p>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="t_replacement_source" value="wikidata" checked>
+          <div class="rc-head"><span class="rc-icon">🌐</span><span class="rc-title">Wikidata</span></div>
+          <div class="rc-desc rc-desc-sm">Offline local database, with an optional live wikidata.org lookup. Is faster but limited in options.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="t_replacement_source" value="llm">
+          <div class="rc-head"><span class="rc-icon">🤖</span><span class="rc-title">Local LLM (Gemma)</span></div>
+          <div class="rc-desc rc-desc-sm">Local offline Gemma model, more natural, but slower.</div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-run" id="runBtn-text" onclick="runTextDetect()">🔍 Detect Entities</button>
+
+    <div class="card hidden" id="reviewSection-text" style="margin-top:1rem">
+      <div class="card-title">🔍 Review Detected Sensitive Content</div>
+      <p style="font-size:.875rem;color:var(--muted);margin-bottom:.875rem">
+        Highlighted words will be anonymized. Edit replacements, remove entities, or add new ones.
+      </p>
+      <div class="text-block-label" style="margin-bottom:.35rem">Transcript</div>
+      <div class="review-transcript" id="reviewTranscript-text"></div>
+      <div class="text-block-label" style="margin-bottom:.35rem">Entities</div>
+      <div class="entity-list" id="entityList-text"></div>
+      <div class="add-custom-row">
+        <button class="btn-add-custom" onclick="showAddCustom('text')">+ Add Sensitive Word</button>
+        <div class="add-custom-form hidden" id="addCustomForm-text">
+          <input type="text" placeholder="Word or phrase to mark…" id="customWord-text">
+          <input type="text" placeholder="Replace with…" id="customRepl-text">
+          <button class="btn-custom-add" onclick="addCustomEntity('text')">Add</button>
+          <button class="btn-custom-cancel" onclick="hideAddCustom('text')">Cancel</button>
+        </div>
+      </div>
+      <button class="btn-apply" id="applyBtn-text" onclick="applyTextAnonymization()">✓ Apply Anonymization</button>
+    </div>
+
+    <div class="card result-card hidden" id="textResult" style="margin-top:1rem">
+      <div class="card-title">✅ Result</div>
+      <div class="diff-grid">
+        <div>
+          <div class="text-block-label">Original</div>
+          <div class="text-block" id="textOriginalBox"></div>
+        </div>
+        <div>
+          <div class="text-block-label">Anonymized</div>
+          <div class="text-block" id="textResultBox"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn-download" id="downloadBtn-text" onclick="downloadTextResult()">⬇ Download</button>
+        <span style="font-size:.8rem;color:var(--muted)">The boxes above show plain text only but the downloaded file keeps the original document's format and structure. </span>
+      </div>
+    </div>
+
+    <div class="card hidden" id="batchResults-text" style="margin-top:1rem">
+      <div class="batch-results-head">
+        <div class="card-title">📦 Batch Results</div>
+        <button class="btn-download hidden" id="downloadAllBtn-text" onclick="downloadAllBatch('text')">⬇ Download All (.zip)</button>
+      </div>
+      <div id="batchList-text"></div>
+    </div>
+
+  </div><!-- /tab-text -->
+
+  <!-- TAB: Spoken content -->
+  <div id="tab-spoken" class="tab-panel">
+    <p class="tab-intro">Upload an audio recording, it is transcribed, sensitive entities are detected for you to review, and only the anonymized spans are turned back into audio and added back in. The rest of the audio, including the original voice and intonation, stays untouched.</p>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">1</span> Audio File</div>
+      <div class="upload-zone" id="uploadZone-spoken">
+        <input type="file" id="audioFile-spoken" accept="audio/*,.wav,.mp3,.m4a,.aac,.ogg,.flac,.webm" multiple>
+        <div class="upload-icon-wrap">🎙️</div>
+        <div class="upload-main">Drop one or more audio files here</div>
+        <div class="upload-sub">or <span>click to browse</span> &nbsp;·&nbsp; WAV, MP3, M4A, AAC, OGG, FLAC, WebM </div>
+        <div class="upload-name" id="uploadName-spoken"></div>
+      </div>
+      <div class="batch-warning hidden" id="batchWarning-spoken">
+        <span class="batch-warning-icon">⚡</span>
+        <span><strong>Batch mode</strong> - <span id="batchCount-spoken">0</span> files selected. Each file is transcribed and anonymized automatically, reviewing or editing them before synthesis is <strong>not available</strong> when processing multiple files.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">2</span> Anonymization Options</div>
+      <div class="method-legend">
+        <div class="ml-item"><span class="ml-label">Redact with beep</span> - replace with a beep sound.</div>
+        <div class="ml-item"><span class="ml-label">Generalize</span> - replace with a broader category description (e.g., "Lisbon" → "Portuguese city").</div>
+        <div class="ml-item"><span class="ml-label">Fake substitute</span> - replace with a random alternative (e.g., "Catarina" → "Maria").</div>
+        <div class="ml-item"><span class="ml-label">None</span> - leave the entity untouched (no anonymization applied).</div>
+      </div>
+      <div class="config-grid">
+        <div class="config-row">
+        <div class="config-item">
+          <div class="entity-pill ep-per">👤 Person</div>
+          <select id="s_per">
+            <option value="sup">Redact with beep</option>
+            <option value="gen">Generalize</option>
+            <option value="rand" selected>Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-loc">📍 Location</div>
+          <select id="s_loc">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-org">🏢 Organization</div>
+          <select id="s_org">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-misc">🔍 Miscellaneous</div>
+          <select id="s_misc">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-regex">🔤 Patterns (e.g. NIF ) & 🚫 Subcategories not to anonymize</div>
+          <div class="config-row">
+        <div class="config-item">
+          <select id="s_regex">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item exceptions-item">
+          <div class="skip-labels">
+            <button type="button" class="skip-labels-summary is-placeholder">All subcategories will be anonymized</button>
+            <div class="skip-labels-grid">
+              <label><input type="checkbox" class="s_regexskip" value="DATETIME"> Dates &amp; times</label>
+              <label><input type="checkbox" class="s_regexskip" value="IDADE"> Age</label>
+              <label><input type="checkbox" class="s_regexskip" value="QUANTITY"> Amounts / values</label>
+              <label><input type="checkbox" class="s_regexskip" value="TELEMOVEL"> Phone number</label>
+              <label><input type="checkbox" class="s_regexskip" value="EMAIL"> Email</label>
+              <label><input type="checkbox" class="s_regexskip" value="NIF"> Tax ID (NIF)</label>
+              <label><input type="checkbox" class="s_regexskip" value="CARTAO_CIDADAO"> Citizen card</label>
+              <label><input type="checkbox" class="s_regexskip" value="NUM_UTENTE"> Health service number</label>
+              <label><input type="checkbox" class="s_regexskip" value="NISS"> Social security number</label>
+              <label><input type="checkbox" class="s_regexskip" value="CARTAO_BANCARIO"> Bank card</label>
+              <label><input type="checkbox" class="s_regexskip" value="IBAN"> IBAN</label>
+              <label><input type="checkbox" class="s_regexskip" value="NIB"> NIB</label>
+              <label><input type="checkbox" class="s_regexskip" value="PASSAPORTE"> Passport</label>
+              <label><input type="checkbox" class="s_regexskip" value="CARTA_CONDUCAO"> Driving licence</label>
+              <label><input type="checkbox" class="s_regexskip" value="MATRICULA"> Vehicle plate</label>
+              <label><input type="checkbox" class="s_regexskip" value="CODIGO_POSTAL"> Postal code</label>
+              <label><input type="checkbox" class="s_regexskip" value="NUM_PORTA"> Door number</label>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="config-item" style="grid-column:1/-1">
+          <div class="entity-pill ep-misc">🚫 Words that should not anonymized</div>
+          <input type="text" id="s_whitelist" class="whitelist-input" placeholder="e.g. Lisboa, Portugal (comma-separated)">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">3</span> Replacement Source</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem">Determines how the replacement text is generated for the categories above set to Generalize or Fake substitute.</p>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="s_replacement_source" value="wikidata" checked>
+          <div class="rc-head"><span class="rc-icon">🌐</span><span class="rc-title">Wikidata</span></div>
+          <div class="rc-desc rc-desc-sm">Offline local database, with an optional live wikidata.org lookup. Is faster but limited in options.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="s_replacement_source" value="llm">
+          <div class="rc-head"><span class="rc-icon">🤖</span><span class="rc-title">Local LLM (Gemma)</span></div>
+          <div class="rc-desc rc-desc-sm">Local offline Gemma model, more natural, but slower.</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">4</span> Background Noise Handling</div>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_spoken" value="remove" checked>
+          <div class="rc-head"><span class="rc-icon">🔇</span><span class="rc-title">Remove noise</span></div>
+          <div class="rc-desc">Output contains only clean, anonymized speech. Background sounds are discarded.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_spoken" value="keep">
+          <div class="rc-head"><span class="rc-icon">🔊</span><span class="rc-title">Preserve noise</span></div>
+          <div class="rc-desc">Keeps the background sounds from the original recording.</div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-run" id="runBtn-spoken" onclick="runAudioPipeline('spoken')">🚀 Run Pipeline</button>
+
+    <div class="card hidden" id="jobStatus-spoken" style="margin-top:1rem">
+      <div class="job-header">
+        <span class="job-title" id="jobTitle-spoken">⚙️ Running…</span>
+        <span class="status-badge badge-running" id="statusBadge-spoken"><span class="spinner"></span> Running</span>
+      </div>
+      <div class="log-panel" id="logPanel-spoken"></div>
+    </div>
+
+    <div class="card hidden" id="reviewSection-spoken" style="margin-top:1rem">
+      <div class="card-title">🔍 Review Detected Sensitive Content</div>
+      <p style="font-size:.875rem;color:var(--muted);margin-bottom:.875rem">
+        Highlighted words will be anonymized. Edit replacements, remove entities, or add new ones.
+      </p>
+      <div class="text-block-label" style="margin-bottom:.35rem">Transcript</div>
+      <div class="review-transcript" id="reviewTranscript-spoken"></div>
+      <div class="text-block-label" style="margin-bottom:.35rem">Entities</div>
+      <div class="entity-list" id="entityList-spoken"></div>
+      <div class="add-custom-row">
+        <button class="btn-add-custom" onclick="showAddCustom('spoken')">+ Add Sensitive Word</button>
+        <div class="add-custom-form hidden" id="addCustomForm-spoken">
+          <input type="text" placeholder="Word or phrase to mark…" id="customWord-spoken">
+          <input type="text" placeholder="Replace with…" id="customRepl-spoken">
+          <button class="btn-custom-add" onclick="addCustomEntity('spoken')">Add</button>
+          <button class="btn-custom-cancel" onclick="hideAddCustom('spoken')">Cancel</button>
+        </div>
+      </div>
+      <button class="btn-apply" id="applyBtn-spoken" onclick="applyAudioAnonymization('spoken')">✓ Apply & Synthesize</button>
+    </div>
+
+    <div class="card result-card hidden" id="audioResult-spoken" style="margin-top:1rem">
+      <div class="card-title">✅ Result</div>
+      <div id="diffGrid-spoken" class="diff-grid hidden">
+        <div>
+          <div class="text-block-label">Original transcript</div>
+          <div class="text-block" id="transcriptBox-spoken"></div>
+        </div>
+        <div>
+          <div class="text-block-label">Anonymized text</div>
+          <div class="text-block" id="anonymizedBox-spoken"></div>
+        </div>
+      </div>
+      <div id="transcriptSection-spoken" class="hidden" style="margin-bottom:1rem">
+        <div class="text-block-label">Transcript</div>
+        <div class="text-block" id="transcriptOnlyBox-spoken"></div>
+      </div>
+      <hr class="divider" id="resultDivider-spoken">
+      <div id="audioSection-spoken">
+        <div class="audio-row">
+          <audio controls id="audioPlayer-spoken"></audio>
+          <a id="downloadLink-spoken" class="btn-download" download="anonymized.wav">⬇ Download</a>
+          <div class="variant-switcher hidden" id="variantSwitcher-spoken" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+          <div class="try-again-hint" id="tryAgainHint-spoken" hidden>These alternatives re-generate the anonymized parts using a different speech synthesis method, try one to compare quality.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="batchResults-spoken" style="margin-top:1rem">
+      <div class="batch-results-head">
+        <div class="card-title">📦 Batch Results</div>
+        <button class="btn-download hidden" id="downloadAllBtn-spoken" onclick="downloadAllBatch('spoken')">⬇ Download All (.zip)</button>
+      </div>
+      <div id="batchList-spoken"></div>
+    </div>
+
+  </div><!-- /tab-spoken -->
+
+  <!-- TAB: Voice anonymization -->
+  <div id="tab-voice" class="tab-panel">
+    <p class="tab-intro">Upload an audio recording and replace the speaker's voice with a different one, while keeping every word and the original rhythm/intonation exactly as spoken. No anonymization of what is said, only of who's speaking.</p>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">1</span> Audio File</div>
+      <div class="upload-zone" id="uploadZone-voice">
+        <input type="file" id="audioFile-voice" accept="audio/*,.wav,.mp3,.m4a,.aac,.ogg,.flac,.webm" multiple>
+        <div class="upload-icon-wrap">🎙️</div>
+        <div class="upload-main">Drop one or more audio files here</div>
+        <div class="upload-sub">or <span>click to browse</span> &nbsp;·&nbsp; WAV, MP3, M4A, AAC, OGG, FLAC, WebM </div>
+        <div class="upload-name" id="uploadName-voice"></div>
+      </div>
+      <div class="batch-warning hidden" id="batchWarning-voice">
+        <span class="batch-warning-icon">⚡</span>
+        <span><strong>Batch mode</strong> - <span id="batchCount-voice">0</span> files selected. Files are processed one after another.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">2</span> Voice Conversion Method</div>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="vc_method" value="vc_tts" checked>
+          <div class="rc-head"><span class="rc-icon">🔇</span><span class="rc-title">Eliminate all speaker characteristics</span></div>
+          <div class="rc-desc">The voice is replaced with a different one and none of the original tone, pitch, or speaking rhythm carries over. Can sound less natural.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="vc_method" value="vc_knn">
+          <div class="rc-head"><span class="rc-icon">🎭</span><span class="rc-title">Preserve natural speech rhythm</span></div>
+          <div class="rc-desc">The voice is replaced with a different one, but the natural rhythm and timing of the speech stay the same. Can be less private.</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card" id="f5VoiceCard-voice">
+      <div class="card-title"><span class="step-pill">3</span> Reference Speaker <span style="font-weight:400;color:var(--muted);font-size:.75rem;letter-spacing:0;text-transform:none;margin-left:.25rem">- click ▶ to preview</span></div>
+      <div class="speaker-row">
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_aca" checked>
+          <span class="speaker-name">1</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_aca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_ca">
+          <span class="speaker-name">2</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_cm">
+          <span class="speaker-name">3</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_cm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_fl">
+          <span class="speaker-name">4</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_fl">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_lf">
+          <span class="speaker-name">5</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_lf">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_ll">
+          <span class="speaker-name">6</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ll">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_rd">
+          <span class="speaker-name">7</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_rd">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="lpo_spk1">
+          <span class="speaker-name">8</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/lpo_spk1">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="uin_mjp">
+          <span class="speaker-name">9</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/uin_mjp">▶</button>
+        </label>
+        <div class="speaker-group-sep"></div>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="impnac_ant">
+          <span class="speaker-name">10</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/impnac_ant">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_bm">
+          <span class="speaker-name">11</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_bm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_f5_voice" value="in_pl">
+          <span class="speaker-name">12</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_pl">▶</button>
+        </label>
+      </div>
+    </div>
+
+    <div class="card hidden" id="refSetCard-voice">
+      <div class="card-title"><span class="step-pill">3</span> Reference Speaker <span style="font-weight:400;color:var(--muted);font-size:.75rem;letter-spacing:0;text-transform:none;margin-left:.25rem">- click ▶ to preview</span></div>
+      <div class="speaker-row">
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_aca" checked>
+          <span class="speaker-name">1</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_aca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_ca">
+          <span class="speaker-name">2</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_cm">
+          <span class="speaker-name">3</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_cm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_fl">
+          <span class="speaker-name">4</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_fl">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_lf">
+          <span class="speaker-name">5</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_lf">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_ll">
+          <span class="speaker-name">6</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ll">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_rd">
+          <span class="speaker-name">7</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_rd">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="lpo_spk1">
+          <span class="speaker-name">8</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/lpo_spk1">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="uin_mjp">
+          <span class="speaker-name">9</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/uin_mjp">▶</button>
+        </label>
+        <div class="speaker-group-sep"></div>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="impnac_ant">
+          <span class="speaker-name">10</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/impnac_ant">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_bm">
+          <span class="speaker-name">11</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_bm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="vc_ref_set" value="in_pl">
+          <span class="speaker-name">12</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_pl">▶</button>
+        </label>
+      </div>
+    </div>
+
+    <div class="card hidden" id="noiseCard-voice">
+      <div class="card-title"><span class="step-pill">4</span> Background Noise Handling</div>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_voice" value="remove" checked>
+          <div class="rc-head"><span class="rc-icon">🔇</span><span class="rc-title">Remove noise</span></div>
+          <div class="rc-desc">Output contains only clean, converted speech. Background sounds are discarded.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_voice" value="keep">
+          <div class="rc-head"><span class="rc-icon">🔊</span><span class="rc-title">Preserve noise</span></div>
+          <div class="rc-desc">Keeps the background sounds from the original recording.</div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-run" id="runBtn-voice" onclick="runAudioPipeline('voice')">🚀 Run Pipeline</button>
+
+    <div class="card hidden" id="jobStatus-voice" style="margin-top:1rem">
+      <div class="job-header">
+        <span class="job-title" id="jobTitle-voice">⚙️ Running…</span>
+        <span class="status-badge badge-running" id="statusBadge-voice"><span class="spinner"></span> Running</span>
+      </div>
+      <div class="log-panel" id="logPanel-voice"></div>
+    </div>
+
+    <div class="card result-card hidden" id="audioResult-voice" style="margin-top:1rem">
+      <div class="card-title">✅ Result</div>
+      <div id="diffGrid-voice" class="diff-grid hidden">
+        <div>
+          <div class="text-block-label">Original transcript</div>
+          <div class="text-block" id="transcriptBox-voice"></div>
+        </div>
+        <div>
+          <div class="text-block-label">Anonymized text</div>
+          <div class="text-block" id="anonymizedBox-voice"></div>
+        </div>
+      </div>
+      <div id="transcriptSection-voice" class="hidden" style="margin-bottom:1rem">
+        <div class="text-block-label">Transcript (re-synthesized, content unchanged)</div>
+        <div class="text-block" id="transcriptOnlyBox-voice"></div>
+      </div>
+      <hr class="divider" id="resultDivider-voice">
+      <div id="audioSection-voice">
+        <div class="audio-row">
+          <audio controls id="audioPlayer-voice"></audio>
+          <a id="downloadLink-voice" class="btn-download" download="anonymized.wav">⬇ Download</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="batchResults-voice" style="margin-top:1rem">
+      <div class="batch-results-head">
+        <div class="card-title">📦 Batch Results</div>
+        <button class="btn-download hidden" id="downloadAllBtn-voice" onclick="downloadAllBatch('voice')">⬇ Download All (.zip)</button>
+      </div>
+      <div id="batchList-voice"></div>
+    </div>
+
+  </div><!-- /tab-voice -->
+
+  <!-- TAB: Content + Voice -->
+  <div id="tab-full" class="tab-panel">
+    <p class="tab-intro">Upload an audio recording to both anonymize the sensitive content (after your review) and replace the speaker's voice, so neither what was said nor who said it can be traced back to the original.</p>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">1</span> Audio File</div>
+      <div class="upload-zone" id="uploadZone-full">
+        <input type="file" id="audioFile-full" accept="audio/*,.wav,.mp3,.m4a,.aac,.ogg,.flac,.webm" multiple>
+        <div class="upload-icon-wrap">🎙️</div>
+        <div class="upload-main">Drop one or more audio files here</div>
+        <div class="upload-sub">or <span>click to browse</span> &nbsp;·&nbsp; WAV, MP3, M4A, AAC, OGG, FLAC, WebM </div>
+        <div class="upload-name" id="uploadName-full"></div>
+      </div>
+      <div class="batch-warning hidden" id="batchWarning-full">
+        <span class="batch-warning-icon">⚡</span>
+        <span><strong>Batch mode</strong> - <span id="batchCount-full">0</span> files selected. Each file is transcribed and anonymized automatically, reviewing or editing them before synthesis is <strong>not available</strong> when processing multiple files.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">2</span> Anonymization Options</div>
+      <div class="method-legend">
+        <div class="ml-item"><span class="ml-label">Redact with beep</span> - replace with a beep sound.</div>
+        <div class="ml-item"><span class="ml-label">Generalize</span> - replace with a broader category description (e.g., "Lisbon" → "Portuguese city").</div>
+        <div class="ml-item"><span class="ml-label">Fake substitute</span> - replace with a random alternative (e.g., "Catarina" → "Maria").</div>
+        <div class="ml-item"><span class="ml-label">None</span> - leave the entity untouched (no anonymization applied).</div>
+      </div>
+      <div class="config-grid">
+        <div class="config-row">
+        <div class="config-item">
+          <div class="entity-pill ep-per">👤 Person</div>
+          <select id="f_per">
+            <option value="sup">Redact with beep</option>
+            <option value="gen">Generalize</option>
+            <option value="rand" selected>Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-loc">📍 Location</div>
+          <select id="f_loc">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-org">🏢 Organization</div>
+          <select id="f_org">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-misc">🔍 Miscellaneous</div>
+          <select id="f_misc">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="rand">Fake substitute</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        </div>
+        <div class="config-item">
+          <div class="entity-pill ep-regex">🔤 Patterns (e.g. NIF ) & 🚫 Subcategories not to anonymize</div>
+          <div class="config-row">
+        <div class="config-item">
+          <select id="f_regex">
+            <option value="sup">Redact with beep</option>
+            <option value="gen" selected>Generalize</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+        <div class="config-item exceptions-item">
+          <div class="skip-labels">
+            <button type="button" class="skip-labels-summary is-placeholder">All subcategories will be anonymized</button>
+            <div class="skip-labels-grid">
+              <label><input type="checkbox" class="f_regexskip" value="DATETIME"> Dates &amp; times</label>
+              <label><input type="checkbox" class="f_regexskip" value="IDADE"> Age</label>
+              <label><input type="checkbox" class="f_regexskip" value="QUANTITY"> Amounts / values</label>
+              <label><input type="checkbox" class="f_regexskip" value="TELEMOVEL"> Phone number</label>
+              <label><input type="checkbox" class="f_regexskip" value="EMAIL"> Email</label>
+              <label><input type="checkbox" class="f_regexskip" value="NIF"> Tax ID (NIF)</label>
+              <label><input type="checkbox" class="f_regexskip" value="CARTAO_CIDADAO"> Citizen card</label>
+              <label><input type="checkbox" class="f_regexskip" value="NUM_UTENTE"> Health service number</label>
+              <label><input type="checkbox" class="f_regexskip" value="NISS"> Social security number</label>
+              <label><input type="checkbox" class="f_regexskip" value="CARTAO_BANCARIO"> Bank card</label>
+              <label><input type="checkbox" class="f_regexskip" value="IBAN"> IBAN</label>
+              <label><input type="checkbox" class="f_regexskip" value="NIB"> NIB</label>
+              <label><input type="checkbox" class="f_regexskip" value="PASSAPORTE"> Passport</label>
+              <label><input type="checkbox" class="f_regexskip" value="CARTA_CONDUCAO"> Driving licence</label>
+              <label><input type="checkbox" class="f_regexskip" value="MATRICULA"> Vehicle plate</label>
+              <label><input type="checkbox" class="f_regexskip" value="CODIGO_POSTAL"> Postal code</label>
+              <label><input type="checkbox" class="f_regexskip" value="NUM_PORTA"> Door number</label>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="config-item" style="grid-column:1/-1">
+          <div class="entity-pill ep-misc">🚫 Words that should not anonymized</div>
+          <input type="text" id="f_whitelist" class="whitelist-input" placeholder="e.g. Lisboa, Portugal (comma-separated)">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">3</span> Replacement Source</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem">Determines how the replacement text is generated for the categories above set to Generalize or Fake substitute.</p>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="f_replacement_source" value="wikidata" checked>
+          <div class="rc-head"><span class="rc-icon">🌐</span><span class="rc-title">Wikidata</span></div>
+          <div class="rc-desc rc-desc-sm">Offline local database, with an optional live wikidata.org lookup. Is faster but limited in options.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="f_replacement_source" value="llm">
+          <div class="rc-head"><span class="rc-icon">🤖</span><span class="rc-title">Local LLM (Gemma)</span></div>
+          <div class="rc-desc rc-desc-sm">Local offline Gemma model, more natural, but slower.</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="step-pill">4</span> Method</div>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="full_method" value="full_asr_tts" checked>
+          <div class="rc-head"><span class="rc-icon">🔇</span><span class="rc-title">Eliminate all speaker characteristics</span></div>
+          <div class="rc-desc">The voice is replaced with a different one and none of the original tone, pitch, or speaking rhythm carries over. Can sound less natural.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="full_method" value="full_infilling_knn">
+          <div class="rc-head"><span class="rc-icon">🎭</span><span class="rc-title">Preserve natural speech rhythm</span></div>
+          <div class="rc-desc">The voice is replaced with a different one, but the natural rhythm and timing of the speech stay the same. Can be less private.</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card" id="f5VoiceCard-full">
+      <div class="card-title"><span class="step-pill">5</span> Reference Speaker <span style="font-weight:400;color:var(--muted);font-size:.75rem;letter-spacing:0;text-transform:none;margin-left:.25rem">- click ▶ to preview</span></div>
+      <div class="speaker-row">
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_aca" checked>
+          <span class="speaker-name">1</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_aca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_ca">
+          <span class="speaker-name">2</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_cm">
+          <span class="speaker-name">3</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_cm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_fl">
+          <span class="speaker-name">4</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_fl">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_lf">
+          <span class="speaker-name">5</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_lf">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_ll">
+          <span class="speaker-name">6</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ll">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_rd">
+          <span class="speaker-name">7</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_rd">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="lpo_spk1">
+          <span class="speaker-name">8</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/lpo_spk1">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="uin_mjp">
+          <span class="speaker-name">9</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/uin_mjp">▶</button>
+        </label>
+        <div class="speaker-group-sep"></div>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="impnac_ant">
+          <span class="speaker-name">10</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/impnac_ant">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_bm">
+          <span class="speaker-name">11</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_bm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_f5_voice" value="in_pl">
+          <span class="speaker-name">12</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_pl">▶</button>
+        </label>
+      </div>
+    </div>
+
+    <div class="card hidden" id="refSetCard-full">
+      <div class="card-title"><span class="step-pill">5</span> Reference Speaker <span style="font-weight:400;color:var(--muted);font-size:.75rem;letter-spacing:0;text-transform:none;margin-left:.25rem">- click ▶ to preview</span></div>
+      <div class="speaker-row">
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_aca" checked>
+          <span class="speaker-name">1</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_aca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_ca">
+          <span class="speaker-name">2</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ca">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_cm">
+          <span class="speaker-name">3</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_cm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_fl">
+          <span class="speaker-name">4</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_fl">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_lf">
+          <span class="speaker-name">5</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_lf">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_ll">
+          <span class="speaker-name">6</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_ll">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_rd">
+          <span class="speaker-name">7</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_rd">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="lpo_spk1">
+          <span class="speaker-name">8</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/lpo_spk1">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="uin_mjp">
+          <span class="speaker-name">9</span>
+          <span class="speaker-gender">Female</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/uin_mjp">▶</button>
+        </label>
+        <div class="speaker-group-sep"></div>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="impnac_ant">
+          <span class="speaker-name">10</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/impnac_ant">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_bm">
+          <span class="speaker-name">11</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_bm">▶</button>
+        </label>
+        <label class="speaker-card">
+          <input type="radio" name="full_ref_set" value="in_pl">
+          <span class="speaker-name">12</span>
+          <span class="speaker-gender">Male</span>
+          <button type="button" class="speaker-play-btn" data-src="/ref_preview/in_pl">▶</button>
+        </label>
+      </div>
+    </div>
+
+    <div class="card hidden" id="noiseCard-full">
+      <div class="card-title"><span class="step-pill">6</span> Background Noise Handling</div>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_full" value="remove" checked>
+          <div class="rc-head"><span class="rc-icon">🔇</span><span class="rc-title">Remove noise</span></div>
+          <div class="rc-desc">Output contains only clean, anonymized speech. Background sounds are discarded.</div>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="noise_mode_full" value="keep">
+          <div class="rc-head"><span class="rc-icon">🔊</span><span class="rc-title">Preserve noise</span></div>
+          <div class="rc-desc">Keeps the background sounds from the original recording.</div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-run" id="runBtn-full" onclick="runAudioPipeline('full')">🚀 Run Pipeline</button>
+
+    <div class="card hidden" id="jobStatus-full" style="margin-top:1rem">
+      <div class="job-header">
+        <span class="job-title" id="jobTitle-full">⚙️ Running…</span>
+        <span class="status-badge badge-running" id="statusBadge-full"><span class="spinner"></span> Running</span>
+      </div>
+      <div class="log-panel" id="logPanel-full"></div>
+    </div>
+
+    <div class="card hidden" id="reviewSection-full" style="margin-top:1rem">
+      <div class="card-title">🔍 Review Detected Sensitive Content</div>
+      <p style="font-size:.875rem;color:var(--muted);margin-bottom:.875rem">
+        Highlighted words will be anonymized. Edit replacements, remove entities, or add new ones.
+      </p>
+      <div class="text-block-label" style="margin-bottom:.35rem">Transcript</div>
+      <div class="review-transcript" id="reviewTranscript-full"></div>
+      <div class="text-block-label" style="margin-bottom:.35rem">Entities</div>
+      <div class="entity-list" id="entityList-full"></div>
+      <div class="add-custom-row">
+        <button class="btn-add-custom" onclick="showAddCustom('full')">+ Add Sensitive Word</button>
+        <div class="add-custom-form hidden" id="addCustomForm-full">
+          <input type="text" placeholder="Word or phrase to mark…" id="customWord-full">
+          <input type="text" placeholder="Replace with…" id="customRepl-full">
+          <button class="btn-custom-add" onclick="addCustomEntity('full')">Add</button>
+          <button class="btn-custom-cancel" onclick="hideAddCustom('full')">Cancel</button>
+        </div>
+      </div>
+      <button class="btn-apply" id="applyBtn-full" onclick="applyAudioAnonymization('full')">✓ Apply & Synthesize</button>
+    </div>
+
+    <div class="card result-card hidden" id="audioResult-full" style="margin-top:1rem">
+      <div class="card-title">✅ Result</div>
+      <div id="diffGrid-full" class="diff-grid hidden">
+        <div>
+          <div class="text-block-label">Original transcript</div>
+          <div class="text-block" id="transcriptBox-full"></div>
+        </div>
+        <div>
+          <div class="text-block-label">Anonymized text</div>
+          <div class="text-block" id="anonymizedBox-full"></div>
+        </div>
+      </div>
+      <div id="transcriptSection-full" class="hidden" style="margin-bottom:1rem">
+        <div class="text-block-label">Transcript</div>
+        <div class="text-block" id="transcriptOnlyBox-full"></div>
+      </div>
+      <hr class="divider" id="resultDivider-full">
+      <div id="audioSection-full">
+        <div class="audio-row">
+          <audio controls id="audioPlayer-full"></audio>
+          <a id="downloadLink-full" class="btn-download" download="anonymized.wav">⬇ Download</a>
+          <div class="variant-switcher hidden" id="variantSwitcher-full" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+          <div class="try-again-hint" id="tryAgainHint-full" hidden>These alternatives re-generate the anonymized parts using a different speech synthesis method, try one to compare quality.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="batchResults-full" style="margin-top:1rem">
+      <div class="batch-results-head">
+        <div class="card-title">📦 Batch Results</div>
+        <button class="btn-download hidden" id="downloadAllBtn-full" onclick="downloadAllBatch('full')">⬇ Download All (.zip)</button>
+      </div>
+      <div id="batchList-full"></div>
+    </div>
+
+  </div><!-- /tab-full -->
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

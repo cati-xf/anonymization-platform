@@ -1,0 +1,5 @@
+name: diarizen
+channels:
+  - defaults
+dependencies:
+  - python=3.10

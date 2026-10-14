@@ -1,0 +1,17 @@
+# Environment snapshot -- 2026-10-06
+OS:      openSUSE Tumbleweed
+Python:  Python 3.13.13
+Conda:   conda 26.3.2
+CUDA:    
+Driver:  595.71.05, NVIDIA RTX 6000 Ada Generation, 49140 MiB  (x8)
+ffmpeg:  ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers
+espeak:  
+torch:   2.8.0+cu128 12.8
+
+F5-TTS:  https://github.com/SWivid/F5-TTS.git @ 4533426c7278fd519e8302b313dae55729ed206e
+DiariZen: https://github.com/BUTSpeechFIT/DiariZen.git @ 844f5555b0a98acd0931511fc641a8c5b8ba92c7
+
+MFA models:
+['portuguese_mfa']
+['portuguese_mfa']
+Ollama models:

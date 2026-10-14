@@ -1,0 +1,133 @@
+{
+  "doc_id": "b00105-u08628",
+  "original_text": "a religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou a unita informou o correspondente da tsf em luanda",
+  "intended_anonymized_text": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo, informou o correspondente da estação de rádio anónima na cidade anónima.",
+  "entities": null,
+  "noise": {
+    "clip": "/cfs/home/u036531/tese-codigo/data/musan/noise/free-sound/noise-free-sound-0055.wav",
+    "snr_db": 5.0
+  },
+  "clips": [
+    {
+      "file": "01_original.mp3",
+      "pipeline": "Original recording",
+      "scenario_id": 1,
+      "scenario": "original_audio",
+      "backend": null,
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou a UNITA, informou o correspondente da TSF em Luanda.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "02_anon_f5_edit.mp3",
+      "pipeline": "Content anonymization: F5-TTS in-place editing (default)",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo, informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.",
+      "wer_vs_intended_anon": 0.023809523809523808
+    },
+    {
+      "file": "03_anon_f5_zeroshot.mp3",
+      "pipeline": "Content anonymization: F5-TTS zero-shot infilling",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling_f5",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo, informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "wer_vs_intended_anon": 0.0
+    },
+    {
+      "file": "04_anon_gtts.mp3",
+      "pipeline": "Content anonymization: Google TTS infilling",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo, informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente a estação de rádio anónima na cidade anónima.",
+      "wer_vs_intended_anon": 0.023809523809523808
+    },
+    {
+      "file": "05_voice_knnvc.mp3",
+      "pipeline": "Voice conversion only (kNN-VC)",
+      "scenario_id": 2,
+      "scenario": "knn_vc_on_original",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou a unita, informou o correspondente da TSF em Luanda.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "06_anon_plus_knnvc.mp3",
+      "pipeline": "Content anonymization + kNN-VC",
+      "scenario_id": 4,
+      "scenario": "content_anon_plus_knn_on_original",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo, informou o correspondente da organização anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o Partido Político Anónimo informou o correspondente da Organização Anónima na cidade anónima.",
+      "wer_vs_intended_anon": 0.0
+    },
+    {
+      "file": "07_noisy_input.mp3",
+      "pipeline": "Noisy input (original + MUSAN noise)",
+      "scenario_id": 5,
+      "scenario": "synthetic_noise_added",
+      "backend": null,
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou a unita informou o correspondente da tsf em luanda.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "08_noisy_anon_no_separation.mp3",
+      "pipeline": "Noisy: content anonymization, no separation",
+      "scenario_id": 6,
+      "scenario": "content_anon_on_noisy_no_separation",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo e informou o correspondente da estação de rádio anónima em uma cidade anónima.",
+      "wer_vs_intended_anon": 0.07142857142857142
+    },
+    {
+      "file": "09_noisy_anon_noise_removed.mp3",
+      "pipeline": "Noisy: content anonymization, background removed",
+      "scenario_id": 10,
+      "scenario": "separation_remove_plus_content_anon_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "remove",
+      "intended_anonymized_text": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.",
+      "wer_vs_intended_anon": 0.023809523809523808
+    },
+    {
+      "file": "10_noisy_anon_noise_kept.mp3",
+      "pipeline": "Noisy: content anonymization, background kept",
+      "scenario_id": 11,
+      "scenario": "separation_keep_plus_content_anon_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "keep",
+      "intended_anonymized_text": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo e informou o correspondente da estação de rádio anónima a cidade anónima.",
+      "wer_vs_intended_anon": 0.047619047619047616
+    },
+    {
+      "file": "11_noisy_anon_plus_knnvc_noise_kept.mp3",
+      "pipeline": "Noisy: content anonymization + kNN-VC, background kept",
+      "scenario_id": 15,
+      "scenario": "separation_keep_plus_content_anon_plus_knn_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "keep",
+      "intended_anonymized_text": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.",
+      "asr_hypothesis": "A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.",
+      "wer_vs_intended_anon": 0.023809523809523808
+    }
+  ]
+}

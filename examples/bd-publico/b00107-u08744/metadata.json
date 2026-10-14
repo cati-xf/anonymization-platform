@@ -1,0 +1,133 @@
+{
+  "doc_id": "b00107-u08744",
+  "original_text": "a avaria dos semáforos durante um período de seis meses o estado catastrófico da rede viária concelhia cheia de buracos e a falta de intervenção do respectivo pelouro foram algumas das críticas dirigidas à vereação socialista e a leonor coutinho em particular",
+  "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+  "entities": null,
+  "noise": {
+    "clip": "noise-free-sound-0595.wav",
+    "snr_db": 15.0
+  },
+  "clips": [
+    {
+      "file": "01_original.mp3",
+      "pipeline": "Original recording",
+      "scenario_id": 1,
+      "scenario": "original_audio",
+      "backend": null,
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em particular.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "02_anon_f5_edit.mp3",
+      "pipeline": "Content anonymization: F5-TTS in-place editing (default)",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.023255813953488372
+    },
+    {
+      "file": "03_anon_f5_zeroshot.mp3",
+      "pipeline": "Content anonymization: F5-TTS zero-shot infilling",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling_f5",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.023255813953488372
+    },
+    {
+      "file": "04_anon_gtts.mp3",
+      "pipeline": "Content anonymization: Google TTS infilling",
+      "scenario_id": 3,
+      "scenario": "content_anon_on_original_backend_sweep",
+      "backend": "infilling",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Pessoa Anónima em particular.",
+      "wer_vs_intended_anon": 0.0
+    },
+    {
+      "file": "05_voice_knnvc.mp3",
+      "pipeline": "Voice conversion only (kNN-VC)",
+      "scenario_id": 2,
+      "scenario": "knn_vc_on_original",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em praticar.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "06_anon_plus_knnvc.mp3",
+      "pipeline": "Content anonymization + kNN-VC",
+      "scenario_id": 4,
+      "scenario": "content_anon_plus_knn_on_original",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.046511627906976744
+    },
+    {
+      "file": "07_noisy_input.mp3",
+      "pipeline": "Noisy input (original + MUSAN noise)",
+      "scenario_id": 5,
+      "scenario": "synthetic_noise_added",
+      "backend": null,
+      "noise_mode": "none",
+      "intended_anonymized_text": null,
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em particular.",
+      "wer_vs_intended_anon": null
+    },
+    {
+      "file": "08_noisy_anon_no_separation.mp3",
+      "pipeline": "Noisy: content anonymization, no separation",
+      "scenario_id": 6,
+      "scenario": "content_anon_on_noisy_no_separation",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "none",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.023255813953488372
+    },
+    {
+      "file": "09_noisy_anon_noise_removed.mp3",
+      "pipeline": "Noisy: content anonymization, background removed",
+      "scenario_id": 10,
+      "scenario": "separation_remove_plus_content_anon_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "remove",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.023255813953488372
+    },
+    {
+      "file": "10_noisy_anon_noise_kept.mp3",
+      "pipeline": "Noisy: content anonymization, background kept",
+      "scenario_id": 11,
+      "scenario": "separation_keep_plus_content_anon_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "keep",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.023255813953488372
+    },
+    {
+      "file": "11_noisy_anon_plus_knnvc_noise_kept.mp3",
+      "pipeline": "Noisy: content anonymization + kNN-VC, background kept",
+      "scenario_id": 15,
+      "scenario": "separation_keep_plus_content_anon_plus_knn_on_noisy",
+      "backend": "infilling_f5_tts",
+      "noise_mode": "keep",
+      "intended_anonymized_text": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a pessoa anónima em particular.",
+      "asr_hypothesis": "A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede fiaria que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.",
+      "wer_vs_intended_anon": 0.06976744186046512
+    }
+  ]
+}

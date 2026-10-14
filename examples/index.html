@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anonymization Examples</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Font and colors follow the web app (static/index.html). */
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    color-scheme: light;
+    --primary: #1e40af; --primary-dark: #1e3a8a; --primary-light: #dbeafe;
+    --bg: #ffffff; --panel: #f8fafc; --border: #e2e8f0; --muted: #64748b; --text: #0f172a;
+  }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.6 'Inter', system-ui, -apple-system, sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 48px 16px 72px; }
+  a { color: var(--primary); text-underline-offset: 2px; }
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.02em; margin: 0 0 .3rem; }
+  .sub { color: var(--muted); margin: 0 0 1.2rem; }
+  .lead { margin: 0 0 1rem; }
+  .toc-title { font-weight: 600; margin: 0 0 .3rem; }
+  .toc { display: flex; flex-wrap: wrap; gap: .3rem 1.8rem; padding-left: 1.2rem; margin: 0; }
+  .toc li::marker { color: var(--muted); }
+  .toc a { font-weight: 500; }
+
+  section { border-top: 1px solid var(--border); margin-top: 2.8rem; padding-top: 2rem; }
+  .ex-head { display: flex; gap: .9rem; align-items: baseline; margin-bottom: 1.1rem; }
+  .ex-num { font-size: 2rem; font-weight: 700; line-height: 1; color: var(--primary-dark); }
+  h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -.01em; margin: 0; }
+  .src { margin: .1rem 0 0; color: var(--muted); font-size: .85rem; }
+
+  .texts { display: grid; grid-template-columns: 1fr 1fr; background: var(--panel);
+           border: 1px solid var(--border); border-radius: .6rem; }
+  .texts > div { padding: .9rem 1.1rem; }
+  .texts > div + div { border-left: 1px solid var(--border); }
+  .label { font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: .25rem; }
+  .texts p { margin: 0; }
+  del { color: var(--muted); text-decoration-color: #94a3b8; }
+  ins { text-decoration: none; font-weight: 600; color: var(--primary-dark);
+         background: var(--primary-light); border-radius: .25rem; padding: 0 .25rem; }
+
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 1.8rem 0 .4rem; }
+  .note { color: var(--muted); font-size: .9rem; margin: 0 0 .6rem; }
+  .quote { margin: 0 0 .9rem; padding-left: .9rem; border-left: 2px solid var(--border); }
+  code { font-size: .85em; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: left; font-weight: 600; font-size: .82rem; color: var(--muted);
+        border-bottom: 1.5px solid var(--text); padding: .4rem .6rem; }
+  td { border-bottom: 1px solid var(--border); padding: .65rem .6rem; vertical-align: middle; }
+  tbody tr:hover { background: var(--panel); }
+  .n { width: 2rem; color: var(--muted); }
+  .sys { font-weight: 600; width: 23%; }
+  .pill { display: inline-block; font-size: .7rem; font-weight: 600; color: var(--primary);
+          background: var(--primary-light); border-radius: 999px; padding: 0 .45rem; margin-left: .2rem; vertical-align: 1px; }
+  .aud { width: 260px; }
+  audio { width: 250px; height: 34px; display: block; }
+  .asr { color: var(--muted); font-size: .85rem; line-height: 1.45; }
+  .w { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .na { color: #cbd5e1; }
+
+  @media (max-width: 760px) {
+    h1 { font-size: 1.6rem; }
+    .texts { grid-template-columns: 1fr; }
+    .texts > div + div { border-left: 0; border-top: 1px solid var(--border); }
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: .35rem .5rem;
+          grid-template-areas: "n sys w" ". aud aud" ". asr asr";
+          border-bottom: 1px solid var(--border); padding: .8rem 0; }
+    td, td.sys, td.aud, td.n { border: 0; padding: 0; width: auto; }
+    td.n { grid-area: n; } td.sys { grid-area: sys; } td.w { grid-area: w; }
+    td.aud { grid-area: aud; } td.asr { grid-area: asr; }
+    audio { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Listening examples</h1>
+  <p class="sub"><a href="https://github.com/cati-xf/anonymization-platform">GitHub repository</a></p>
+  <p class="lead">Three utterances from the BD-PÚBLICO read-speech test set, each from a different
+  speaker, taken from the thesis evaluation. Every entity is generalized: removed words are
+  <del>struck through</del> and replacements are <ins>highlighted</ins>. Each clip shows what the
+  Whisper model hears in it, and the word error rate (WER) against the intended
+  anonymized text. Voice-conversion-only clips keep the original words, so they have no WER.</p>
+  <p class="toc-title">The three examples:</p>
+  <ol class="toc"><li><a href="#b00107-u08744">Person name</a></li><li><a href="#b00108-u08816">Locations (city and country)</a></li><li><a href="#b00105-u08628">Organizations and a city</a></li></ol>
+  
+  <section id="b00107-u08744">
+    <div class="ex-head">
+      <span class="ex-num">1</span>
+      <h2>Person name</h2>
+    </div>
+    <div class="texts">
+      <div><div class="label">Original</div><p>a avaria dos semáforos durante um período de seis meses o estado catastrófico da rede viária concelhia cheia de buracos e a falta de intervenção do respectivo pelouro foram algumas das críticas dirigidas à vereação socialista e a <del>leonor coutinho</del> em particular</p></div>
+      <div><div class="label">Anonymized</div><p>A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a <ins>pessoa anónima</ins> em particular.</p></div>
+    </div>
+    <h3>Clean recording</h3>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">1</td>
+            <td class="sys">Original recording</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/01_original.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em particular.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">2</td>
+            <td class="sys">F5-TTS in-place editing <span class="pill">default</span></td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/02_anon_f5_edit.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">2.3%</td>
+          </tr>
+          <tr>
+            <td class="n">3</td>
+            <td class="sys">F5-TTS zero-shot infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/03_anon_f5_zeroshot.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">2.3%</td>
+          </tr>
+          <tr>
+            <td class="n">4</td>
+            <td class="sys">Google TTS infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/04_anon_gtts.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Pessoa Anónima em particular.</td>
+            <td class="w">0.0%</td>
+          </tr>
+          <tr>
+            <td class="n">5</td>
+            <td class="sys">Voice conversion only (kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/05_voice_knnvc.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em praticar.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">6</td>
+            <td class="sys">Content + voice (F5-TTS editing + kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/06_anon_plus_knnvc.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">4.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    <h3>With background noise</h3>
+    <p class="note">MUSAN noise added at 15&nbsp;dB SNR. All anonymized clips use <strong>F5-TTS in-place editing</strong>, the default backend.</p>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">7</td>
+            <td class="sys">Noisy input</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/07_noisy_input.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e a Leonor Coutinho em particular.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">8</td>
+            <td class="sys">Anonymized, no separation</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/08_noisy_anon_no_separation.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">2.3%</td>
+          </tr>
+          <tr>
+            <td class="n">9</td>
+            <td class="sys">Anonymized, background removed</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/09_noisy_anon_noise_removed.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">2.3%</td>
+          </tr>
+          <tr>
+            <td class="n">10</td>
+            <td class="sys">Anonymized, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/10_noisy_anon_noise_kept.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede viária que concelhia cheia de buracos e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">2.3%</td>
+          </tr>
+          <tr>
+            <td class="n">11</td>
+            <td class="sys">Content + voice, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00107-u08744/11_noisy_anon_plus_knnvc_noise_kept.mp3"></audio></td>
+            <td class="asr">A avaria dos semáforos durante um período de seis meses, o estado catastrófico da rede fiaria que conseguia, cheia de buracos, e a falta de intervenção do respetivo pelouro foram algumas das críticas dirigidas à vereação socialista e à pessoa anónima em particular.</td>
+            <td class="w">7.0%</td>
+          </tr>
+        </tbody>
+      </table>
+  </section>
+  <section id="b00108-u08816">
+    <div class="ex-head">
+      <span class="ex-num">2</span>
+      <h2>Locations (city and country)</h2>
+    </div>
+    <div class="texts">
+      <div><div class="label">Original</div><p>brigadas de mulheres e jovens dedicavam-se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga <del>nova lisboa</del> sonhada um dia capital <del>de angola</del> volte a ser a pujante cidade do início da década de setenta</p></div>
+      <div><div class="label">Anonymized</div><p>Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga <ins>cidade anónima</ins> sonhada um dia capital <ins>do estado soberano anónimo</ins> volte a ser a pujante cidade do início da década de setenta.</p></div>
+    </div>
+    <h3>Clean recording</h3>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">1</td>
+            <td class="sys">Original recording</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/01_original.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga nova lisboa sonhada um dia capital de angola volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">2</td>
+            <td class="sys">F5-TTS in-place editing <span class="pill">default</span></td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/02_anon_f5_edit.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónima volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">1.8%</td>
+          </tr>
+          <tr>
+            <td class="n">3</td>
+            <td class="sys">F5-TTS zero-shot infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/03_anon_f5_zeroshot.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónimo volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">0.0%</td>
+          </tr>
+          <tr>
+            <td class="n">4</td>
+            <td class="sys">Google TTS infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/04_anon_gtts.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital de um estado soberano anónimo volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">3.6%</td>
+          </tr>
+          <tr>
+            <td class="n">5</td>
+            <td class="sys">Voice conversion only (kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/05_voice_knnvc.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga nova lisboa sonhada um dia capital de angola volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">6</td>
+            <td class="sys">Content + voice (F5-TTS editing + kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/06_anon_plus_knnvc.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónima volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">3.6%</td>
+          </tr>
+        </tbody>
+      </table>
+    <h3>With background noise</h3>
+    <p class="note">MUSAN noise added at 15&nbsp;dB SNR. All anonymized clips use <strong>F5-TTS in-place editing</strong>, the default backend.</p>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">7</td>
+            <td class="sys">Noisy input</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/07_noisy_input.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga nova lisboa sonhada um dia capital de angola volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">8</td>
+            <td class="sys">Anonymized, no separation</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/08_noisy_anon_no_separation.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónima volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">1.8%</td>
+          </tr>
+          <tr>
+            <td class="n">9</td>
+            <td class="sys">Anonymized, background removed</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/09_noisy_anon_noise_removed.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónimo volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">0.0%</td>
+          </tr>
+          <tr>
+            <td class="n">10</td>
+            <td class="sys">Anonymized, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/10_noisy_anon_noise_kept.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se a limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónimo volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">0.0%</td>
+          </tr>
+          <tr>
+            <td class="n">11</td>
+            <td class="sys">Content + voice, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00108-u08816/11_noisy_anon_plus_knnvc_noise_kept.mp3"></audio></td>
+            <td class="asr">Brigadas de mulheres e jovens dedicavam se limpar toneladas de destroços acumulados em cinquenta e cinco dias de combates ferozes mas a tarefa de reconstrução essa demorará longos anos até que a antiga cidade anónima sonhada um dia capital do estado soberano anónimo volte a ser a pujante cidade do início da década de setenta.</td>
+            <td class="w">1.8%</td>
+          </tr>
+        </tbody>
+      </table>
+  </section>
+  <section id="b00105-u08628">
+    <div class="ex-head">
+      <span class="ex-num">3</span>
+      <h2>Organizations and a city</h2>
+    </div>
+    <div class="texts">
+      <div><div class="label">Original</div><p>a religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou <del>a unita</del> informou o correspondente da <del>tsf em luanda</del></p></div>
+      <div><div class="label">Anonymized</div><p>A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou <ins>o partido político anónimo,</ins> informou o correspondente da <ins>estação de rádio anónima na cidade anónima.</ins></p></div>
+    </div>
+    <h3>Clean recording</h3>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">1</td>
+            <td class="sys">Original recording</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/01_original.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou a UNITA, informou o correspondente da TSF em Luanda.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">2</td>
+            <td class="sys">F5-TTS in-place editing <span class="pill">default</span></td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/02_anon_f5_edit.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.</td>
+            <td class="w">2.4%</td>
+          </tr>
+          <tr>
+            <td class="n">3</td>
+            <td class="sys">F5-TTS zero-shot infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/03_anon_f5_zeroshot.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima na cidade anónima.</td>
+            <td class="w">0.0%</td>
+          </tr>
+          <tr>
+            <td class="n">4</td>
+            <td class="sys">Google TTS infilling</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/04_anon_gtts.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente a estação de rádio anónima na cidade anónima.</td>
+            <td class="w">2.4%</td>
+          </tr>
+          <tr>
+            <td class="n">5</td>
+            <td class="sys">Voice conversion only (kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/05_voice_knnvc.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou a unita, informou o correspondente da TSF em Luanda.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">6</td>
+            <td class="sys">Content + voice (F5-TTS editing + kNN-VC)</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/06_anon_plus_knnvc.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região, devido ao seu trabalho de assistência social junto das populações desalojadas, foi morta por desconhecidos armados e o governo provincial responsabilizou o Partido Político Anónimo informou o correspondente da Organização Anónima na cidade anónima.</td>
+            <td class="w">0.0%</td>
+          </tr>
+        </tbody>
+      </table>
+    <h3>With background noise</h3>
+    <p class="note">MUSAN noise added at 5&nbsp;dB SNR. All anonymized clips use <strong>F5-TTS in-place editing</strong>, the default backend.</p>
+      <table>
+        <thead><tr><th class="n">#</th><th>System</th><th>Audio</th><th>What Whisper hears</th><th class="w">WER</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="n">7</td>
+            <td class="sys">Noisy input</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/07_noisy_input.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou a unita informou o correspondente da tsf em luanda.</td>
+            <td class="w"><span class="na">—</span></td>
+          </tr>
+          <tr>
+            <td class="n">8</td>
+            <td class="sys">Anonymized, no separation</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/08_noisy_anon_no_separation.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo e informou o correspondente da estação de rádio anónima em uma cidade anónima.</td>
+            <td class="w">7.1%</td>
+          </tr>
+          <tr>
+            <td class="n">9</td>
+            <td class="sys">Anonymized, background removed</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/09_noisy_anon_noise_removed.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.</td>
+            <td class="w">2.4%</td>
+          </tr>
+          <tr>
+            <td class="n">10</td>
+            <td class="sys">Anonymized, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/10_noisy_anon_noise_kept.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo e informou o correspondente da estação de rádio anónima a cidade anónima.</td>
+            <td class="w">4.8%</td>
+          </tr>
+          <tr>
+            <td class="n">11</td>
+            <td class="sys">Content + voice, background kept</td>
+            <td class="aud"><audio controls preload="none" src="bd-publico/b00105-u08628/11_noisy_anon_plus_knnvc_noise_kept.mp3"></audio></td>
+            <td class="asr">A religiosa muito conhecida na região devido ao seu trabalho de assistência social junto das populações desalojadas foi morta por desconhecidos armados e o governo provincial responsabilizou o partido político anónimo informou o correspondente da estação de rádio anónima a cidade anónima.</td>
+            <td class="w">2.4%</td>
+          </tr>
+        </tbody>
+      </table>
+  </section>
+</main>
+</body>
+</html>

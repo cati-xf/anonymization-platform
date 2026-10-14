@@ -1,0 +1,32 @@
+# Main venv (web app, text anonymization, ASR, kNN-VC, TUSS separation).
+# F5-TTS, MFA and DiariZen run in their own conda envs -- see README / envs/.
+# For the exact versions used in the thesis see requirements.lock.txt.
+
+# web app
+fastapi
+uvicorn[standard]
+python-multipart
+python-docx
+
+# text anonymization
+spacy
+requests
+
+# audio / ASR
+torch
+torchaudio
+numpy
+scipy
+soundfile
+whisperx
+ctranslate2
+transformers
+praatio
+imageio-ffmpeg     # bundled ffmpeg fallback if none is installed
+gtts
+
+# TUSS speech/noise separation (standalone_inference)
+pyyaml
+packaging
+rotary-embedding-torch
+fast-bss-eval

@@ -1,0 +1,12 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# runtime scratch space
+data/
+
+# large / externally obtained artifacts
+models/
+ref/tmp/*.wav
